@@ -1,0 +1,101 @@
+name: Release
+
+on:
+    push:
+        tags:
+            - "v*"
+
+permissions:
+    contents: write
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Set up Go
+              uses: actions/setup-go@v4
+              with:
+                  go-version: "1.21"
+
+            - name: Run tests
+              run: go test -v ./...
+
+            - name: Build binaries
+              run: |
+                  # Linux amd64
+                  GOOS=linux GOARCH=amd64 go build -o dist/resume-builder-linux-amd64 .
+
+                  # Linux arm64
+                  GOOS=linux GOARCH=arm64 go build -o dist/resume-builder-linux-arm64 .
+
+                  # macOS amd64
+                  GOOS=darwin GOARCH=amd64 go build -o dist/resume-builder-darwin-amd64 .
+
+                  # macOS arm64 (Apple Silicon)
+                  GOOS=darwin GOARCH=arm64 go build -o dist/resume-builder-darwin-arm64 .
+
+                  # Windows amd64
+                  GOOS=windows GOARCH=amd64 go build -o dist/resume-builder-windows-amd64.exe .
+
+                  # Windows arm64
+                  GOOS=windows GOARCH=arm64 go build -o dist/resume-builder-windows-arm64.exe .
+
+            - name: Create checksums
+              run: |
+                  cd dist
+                  sha256sum * > checksums.txt
+
+            - name: Generate changelog
+              id: changelog
+              run: |
+                  echo "changelog<<EOF" >> $GITHUB_OUTPUT
+                  echo "## What's Changed" >> $GITHUB_OUTPUT
+                  echo "" >> $GITHUB_OUTPUT
+
+                  # Get previous tag, fallback to first commit if no previous tags
+                  PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || git rev-list --max-parents=0 HEAD)
+
+                  # Generate changelog from commits
+                  git log --pretty=format:"- %s" ${PREVIOUS_TAG}..HEAD >> $GITHUB_OUTPUT
+                  echo "" >> $GITHUB_OUTPUT
+                  echo "EOF" >> $GITHUB_OUTPUT
+
+            - name: Create Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: |
+                      dist/resume-builder-*
+                      dist/checksums.txt
+                  body: |
+                      ${{ steps.changelog.outputs.changelog }}
+
+                      ## Installation
+
+                      ### Quick Install (Linux/macOS)
+                      ```bash
+                      # Download and install
+                      curl -L https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/resume-builder-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/') -o resume-builder
+                      chmod +x resume-builder
+                      sudo mv resume-builder /usr/local/bin/
+                      ```
+
+                      ### Manual Download
+                      Choose the appropriate binary for your system:
+                      - **Linux AMD64**: `resume-builder-linux-amd64`
+                      - **Linux ARM64**: `resume-builder-linux-arm64`
+                      - **macOS Intel**: `resume-builder-darwin-amd64`
+                      - **macOS Apple Silicon**: `resume-builder-darwin-arm64`
+                      - **Windows AMD64**: `resume-builder-windows-amd64.exe`
+                      - **Windows ARM64**: `resume-builder-windows-arm64.exe`
+
+                      ### Verify Download
+                      ```bash
+                      sha256sum -c checksums.txt
+                      ```
+                  draft: false
+                  prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+                  generate_release_notes: true
