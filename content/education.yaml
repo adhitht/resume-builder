@@ -1,0 +1,25 @@
+education:
+    - id: "iit_hyderabad"
+      degree: "B.Tech in Mathematics and Computing"
+      school: "Indian Institute of Technology, Hyderabad"
+      location: "Hyderabad, India"
+      duration: "Nov. 2022 -- Present"
+      gpa: "8.1"
+      tags:
+          [
+              "academic",
+              "google",
+              "amazon",
+              "microsoft",
+              "startup",
+              "backend",
+              "fullstack",
+          ]
+
+    - id: "high_school"
+      degree: "High School Diploma"
+      school: "Palo Alto High School"
+      location: "Palo Alto, CA"
+      duration: "Aug. 2016 -- May 2020"
+      gpa: "4.0"
+      tags: ["academic", "basic"]

@@ -1,0 +1,20 @@
+skills:
+  - id: "languages"
+    category: "Languages"
+    tags: ["google", "amazon", "microsoft", "startup", "backend", "frontend"]
+    items: ["Go lang", "Python", "C/C++", "SQL", "JavaScript", "HTML/CSS"]
+    
+  - id: "frameworks"
+    category: "Frameworks"
+    tags: ["google", "amazon", "microsoft", "startup", "fullstack", "mobile"]
+    items: ["Next JS", "Flutter", "React Native", "Node.js", "Material-UI", "FastAPI"]
+    
+  - id: "tools"
+    category: "Developer Tools"
+    tags: ["google", "amazon", "microsoft", "startup", "devops"]
+    items: ["Git", "Docker", "Google Cloud Platform", "VS Code", "Visual Studio"]
+    
+  - id: "libraries"
+    category: "Libraries"
+    tags: ["google", "amazon", "microsoft", "frontend", "data"]
+    items: ["React", "pandas", "NumPy"]

@@ -1,0 +1,13 @@
+projects:
+  - id: "resume-builder"
+    name: "Resume Builder"
+    duration: "July 2023"
+    tags: ["google", "amazon", "microsoft", "backend", "fullstack"]
+    description: "A TUI program that generates a resume from a set of YAML files."
+    highlights:
+      - "Developed a TUI program that allows users to create a resume from a set of YAML files."
+      - "Implemented a feature that allows users to choose from a variety of templates."
+      - "The program is built with Go and uses the Bubble Tea library."
+    technologies: ["Go", "YAML", "Typst"]
+    links:
+      github: "https://github.com/adhitht/resume-builder"

@@ -1,0 +1,6 @@
+achievements:
+  - id: "hackathon"
+    title: "Hackathon Winner"
+    year: "2023"
+    tags: ["academic", "google", "amazon", "microsoft"]
+    description: "Won first place in the 2023 Hackathon, where we developed a mobile application that helps users find and book appointments with local service providers."
