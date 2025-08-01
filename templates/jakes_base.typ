@@ -1,9 +1,6 @@
-// jakes_base.typ - Base template using Jake's resume style
 #import "jakes.typ": resume, header, resume_heading, edu_item, exp_item, project_item, skill_item
 #import "utils.typ": *
 
-
-// Section renderers using Jake's components
 #let render_jakes_education_section(entries, show_gpa: true) = {
   resume_heading[Education]
   for entry in entries {
@@ -92,17 +89,17 @@
   }
 }
 
-
-// Configuration function - called by specific resume variants
 #let render_jakes_resume(
-  selected_tags: (),
-  selected_ids: (),
-  exclude_tags: (),
-  exclude_ids: (),
   section_order: ("education", "experience", "projects", "skills"),
   show_gpa: true,
   max_experience: none,
   max_projects: none,
+  include_education: (),
+  include_experience: (),
+  include_projects: (),
+  include_skills: (),
+  include_achievements: (),
+  include_volunteering: (),
 ) = {
   let personal_data = yaml("../content/personal.yaml").personal
   let education_data = yaml("../content/education.yaml").education
@@ -112,12 +109,14 @@
   let achievements_data = yaml("../content/achievements.yaml").achievements
   let volunteering_data = yaml("../content/volunteering.yaml").volunteering
 
-  let filtered_education = filter_entries(education_data, selected_tags, selected_ids, exclude_tags, exclude_ids)
-  let filtered_experience = filter_entries(experience_data, selected_tags, selected_ids, exclude_tags, exclude_ids)
-  let filtered_projects = filter_entries(projects_data, selected_tags, selected_ids, exclude_tags, exclude_ids)
-  let filtered_skills = filter_entries(skills_data, selected_tags, selected_ids, exclude_tags, exclude_ids)
-  let filtered_achievements = filter_entries(achievements_data, selected_tags, selected_ids, exclude_tags, exclude_ids)
-  let filtered_volunteering = filter_entries(volunteering_data, selected_tags, selected_ids, exclude_tags, exclude_ids)
+  let filter_by_ids(data, ids) = data.filter(x => ids.contains(x.id))
+
+  let filtered_education = filter_by_ids(education_data, include_education)
+  let filtered_experience = filter_by_ids(experience_data, include_experience)
+  let filtered_projects = filter_by_ids(projects_data, include_projects)
+  let filtered_achievements = filter_by_ids(achievements_data, include_achievements)
+  let filtered_volunteering = filter_by_ids(volunteering_data, include_volunteering)
+  let filtered_skills = filter_by_ids(skills_data, include_skills)
 
   if max_experience != none {
     filtered_experience = filtered_experience.slice(0, calc.min(max_experience, filtered_experience.len()))
